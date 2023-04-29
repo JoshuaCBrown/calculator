@@ -2,23 +2,43 @@ let firstNum = null;
 let secNum = null;
 let sign = null;
 let currentArr = [];
+let equalsLastPressed = false;
+let response;
 
 //mathematic functions called by operator()
 function calcAdd (a, b) {
-    return a + b;
+    response = Math.round((a + b) * 100) / 100;
+    return response;
 }
 function calcSubtract (a, b) {
-    return a - b;
+    response = Math.round((a - b) * 100) / 100;
+    return response;
 }
 function calcMultiply (a, b) {
-    return a * b;
+    response = Math.round((a * b) * 100) / 100;
+    return response;
 }
 function calcDivide (a, b) {
-    return a / b;
-} 
+    if (b === 0) {
+        clearAll();
+        response = "let\'s not."
+        return response;
+    } else {
+        response = response = Math.round((a / b) * 100) / 100;
+        return response;
+    }
+    
+}
+
 
 //determines which math function to call based on the c parameter
 function operator(a, b, c) {
+    if (b === null) {
+        return firstNum;
+    }
+    // if (b === 0 && c === 'divide') {
+    //     display.textContent = `let's not`;
+    // }
     switch (c) {
         case 'plus':
             return calcAdd(a, b);
@@ -29,11 +49,14 @@ function operator(a, b, c) {
         case 'divide':
             return calcDivide(a, b);
         default:
-            return errorMsg();
+            return firstNum;
     }
 }
 
 function createNums(x) {
+    if (equalsLastPressed === true) {
+        clearAll();
+    }
     currentArr.push(x);
     console.log(currentArr);
     display.textContent = currentArr.join('');
@@ -41,13 +64,14 @@ function createNums(x) {
 
 //called by any operator math 
 function doMathBish(x) {
+    equalsLastPressed = false;
     if (sign === null && firstNum === null) {
         firstNum = parseFloat(currentArr.join(''));
         currentArr.length = 0;
         sign = x;
         console.log(sign);
         console.log(currentArr);
-    } elseif (sign === null && firstNum !== null) {
+    } else if (sign === null && firstNum !== null) {
         sign = x;
     } else {
         let runningTotal;
@@ -58,24 +82,28 @@ function doMathBish(x) {
     }
 }
 //called by equal button
+function equalsPrimer() {
+    equalsLastPressed = true;
+    return equals();
+}
+
 function equals() {
     let answer;
-    secondNum = parseFloat(currentArr.join(''));
+    secNum = parseFloat(currentArr.join(''));
     currentArr.length = 0;
-    answer = operator(firstNum, secondNum, sign);
+    answer = operator(firstNum, secNum, sign);
     firstNum = answer;
-    secondNum = null;
+    sign = null
+    secNum = null;
     return answer;
 }
 
-function clearVars() {
-
-}
 function clearAll() {
     firstNum = null;
-    secondNum = null;
+    secNum = null;
     sign = null;
     currentArr.length = 0;
+    equalsLastPressed = false;
     display.textContent = '';
 }
 
@@ -165,7 +193,7 @@ clear.addEventListener('click', () => {
 
 const equal = document.querySelector('#equal');
 equal.addEventListener('click', () => {
-    display.textContent = equals();
+    display.textContent = equalsPrimer();
 });
 
 const display = document.querySelector('#display');
